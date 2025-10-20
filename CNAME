@@ -5,10 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Vehículos Registrados</title>
 <style>
+  /* Reset básico */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
   body {
     font-family: Arial, sans-serif;
     background-color: #f5f6f8;
-    margin: 0;
     padding: 20px;
   }
 
@@ -84,6 +90,16 @@
 
   th {
     background-color: #f0f2f5;
+  }
+
+  @media (max-width: 600px) {
+    table, th, td {
+      font-size: 12px;
+    }
+    .btn {
+      font-size: 12px;
+      padding: 8px 12px;
+    }
   }
 </style>
 </head>
