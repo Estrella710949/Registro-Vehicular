@@ -13,7 +13,7 @@
   }
 
   .container {
-    max-width: 700px;
+    max-width: 750px;
     margin: 0 auto;
   }
 
@@ -101,6 +101,13 @@
   <!-- Formulario -->
   <div class="form-container" id="formVehiculo">
     <h3>Formulario de vehículo</h3>
+
+    <label>RUT:</label>
+    <input type="text" id="rut" placeholder="Ej: 12345678-9" required>
+
+    <label>Nombre:</label>
+    <input type="text" id="nombre" placeholder="Nombre del propietario" required>
+
     <label>Placa:</label>
     <input type="text" id="placa" placeholder="Ej: ABC123" required>
 
@@ -122,6 +129,8 @@
   <!-- Tabla -->
   <table id="tablaVehiculos">
     <tr>
+      <th>RUT</th>
+      <th>Nombre</th>
       <th>P.P.U</th>
       <th>Marca</th>
       <th>Modelo</th>
@@ -142,6 +151,8 @@ function actualizarTabla(filtro = "") {
   const vehiculos = JSON.parse(localStorage.getItem("vehiculos")) || [];
   tabla.innerHTML = `
     <tr>
+      <th>RUT</th>
+      <th>Nombre</th>
       <th>P.P.U</th>
       <th>Marca</th>
       <th>Modelo</th>
@@ -150,14 +161,16 @@ function actualizarTabla(filtro = "") {
     </tr>
   `;
   vehiculos
-    .filter(v => v.placa.includes(filtro) || v.modelo.toLowerCase().includes(filtro.toLowerCase()))
+    .filter(v => v.placa.includes(filtro) || v.modelo.toLowerCase().includes(filtro.toLowerCase()) || v.rut.includes(filtro) || v.nombre.toLowerCase().includes(filtro.toLowerCase()))
     .forEach(v => {
       const fila = tabla.insertRow(-1);
-      fila.insertCell(0).innerText = v.placa;
-      fila.insertCell(1).innerText = v.marca;
-      fila.insertCell(2).innerText = v.modelo;
-      fila.insertCell(3).innerText = v.color;
-      fila.insertCell(4).innerText = v.anio;
+      fila.insertCell(0).innerText = v.rut;
+      fila.insertCell(1).innerText = v.nombre;
+      fila.insertCell(2).innerText = v.placa;
+      fila.insertCell(3).innerText = v.marca;
+      fila.insertCell(4).innerText = v.modelo;
+      fila.insertCell(5).innerText = v.color;
+      fila.insertCell(6).innerText = v.anio;
     });
 }
 
@@ -174,22 +187,26 @@ btnRegistrar.addEventListener("click", () => {
 
 // Guardar vehículo
 document.getElementById("guardarVehiculo").addEventListener("click", () => {
+  const rut = document.getElementById("rut").value.trim();
+  const nombre = document.getElementById("nombre").value.trim();
   const placa = document.getElementById("placa").value.trim();
   const marca = document.getElementById("marca").value.trim();
   const modelo = document.getElementById("modelo").value.trim();
   const color = document.getElementById("color").value.trim();
   const anio = document.getElementById("anio").value.trim();
 
-  if(!placa || !marca || !modelo || !color || !anio) {
+  if(!rut || !nombre || !placa || !marca || !modelo || !color || !anio) {
     alert("Por favor, complete todos los campos.");
     return;
   }
 
   const vehiculos = JSON.parse(localStorage.getItem("vehiculos")) || [];
-  vehiculos.push({ placa, marca, modelo, color, anio });
+  vehiculos.push({ rut, nombre, placa, marca, modelo, color, anio });
   localStorage.setItem("vehiculos", JSON.stringify(vehiculos));
 
   // Limpiar formulario
+  document.getElementById("rut").value = "";
+  document.getElementById("nombre").value = "";
   document.getElementById("placa").value = "";
   document.getElementById("marca").value = "";
   document.getElementById("modelo").value = "";
@@ -203,7 +220,7 @@ document.getElementById("guardarVehiculo").addEventListener("click", () => {
 
 // Buscar vehículo
 btnBuscar.addEventListener("click", () => {
-  const busqueda = prompt("Ingrese placa o modelo a buscar:");
+  const busqueda = prompt("Ingrese RUT, placa, nombre o modelo a buscar:");
   actualizarTabla(busqueda || "");
 });
 
