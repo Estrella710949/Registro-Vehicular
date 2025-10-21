@@ -4,8 +4,11 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Vehículos Registrados</title>
+
+<!-- Normalizar estilos para que se vea igual en todos los navegadores -->
 <style>
-  * {
+  /* Reset básico */
+  *, *::before, *::after {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -173,6 +176,7 @@ const btnBuscar = document.getElementById("btnBuscar");
 const formVehiculo = document.getElementById("formVehiculo");
 const tabla = document.getElementById("tablaVehiculos");
 
+// Función para actualizar la tabla desde localStorage
 function actualizarTabla(filtro = "") {
   const vehiculos = JSON.parse(localStorage.getItem("vehiculos")) || [];
   tabla.innerHTML = `
@@ -203,6 +207,7 @@ function actualizarTabla(filtro = "") {
     });
 }
 
+// Función para eliminar vehículo con contraseña
 function eliminarVehiculo(index) {
   const clave = prompt("Ingrese la contraseña para eliminar el vehículo:");
   if (clave === "Estrella2010") {
@@ -216,6 +221,7 @@ function eliminarVehiculo(index) {
   }
 }
 
+// Registrar vehículo con contraseña
 btnRegistrar.addEventListener("click", () => {
   const clave = prompt("Ingrese la clave para registrar vehículo:");
   if (clave === "Estrella2010") {
@@ -226,6 +232,7 @@ btnRegistrar.addEventListener("click", () => {
   }
 });
 
+// Guardar vehículo en localStorage
 document.getElementById("guardarVehiculo").addEventListener("click", () => {
   const rut = document.getElementById("rut").value.trim();
   const nombre = document.getElementById("nombre").value.trim();
@@ -244,6 +251,7 @@ document.getElementById("guardarVehiculo").addEventListener("click", () => {
   vehiculos.push({ rut, nombre, placa, marca, modelo, color, anio });
   localStorage.setItem("vehiculos", JSON.stringify(vehiculos));
 
+  // Limpiar formulario
   document.getElementById("rut").value = "";
   document.getElementById("nombre").value = "";
   document.getElementById("placa").value = "";
@@ -257,11 +265,13 @@ document.getElementById("guardarVehiculo").addEventListener("click", () => {
   tabla.scrollIntoView({ behavior: "smooth" });
 });
 
+// Buscar vehículo
 btnBuscar.addEventListener("click", () => {
   const busqueda = prompt("Ingrese RUT, placa, nombre o modelo a buscar:");
   actualizarTabla(busqueda || "");
 });
 
+// Inicializar tabla al cargar
 actualizarTabla();
 </script>
 
