@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Vehículos Registrados</title>
 <style>
-  /* Reset básico */
   * {
     margin: 0;
     padding: 0;
@@ -49,6 +48,20 @@
 
   .btn-search:hover {
     background-color: #357a38;
+  }
+
+  .btn-delete {
+    background-color: #e74c3c;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    color: white;
+    cursor: pointer;
+    font-size: 12px;
+  }
+
+  .btn-delete:hover {
+    background-color: #c0392b;
   }
 
   .form-container {
@@ -108,13 +121,11 @@
 <div class="container">
   <h2>🚗 Vehículos Registrados (Civiles)</h2>
 
-  <!-- Botones -->
   <div style="text-align:center;">
     <button class="btn" id="btnRegistrar">Registrar vehículo</button>
     <button class="btn btn-search" id="btnBuscar">🔍 Buscar vehículo</button>
   </div>
 
-  <!-- Formulario -->
   <div class="form-container" id="formVehiculo">
     <h3>Formulario de vehículo</h3>
 
@@ -142,7 +153,6 @@
     <button class="btn" id="guardarVehiculo">Guardar vehículo</button>
   </div>
 
-  <!-- Tabla -->
   <table id="tablaVehiculos">
     <tr>
       <th>RUT</th>
@@ -152,6 +162,7 @@
       <th>Modelo</th>
       <th>Color</th>
       <th>Año</th>
+      <th>Acción</th>
     </tr>
   </table>
 </div>
@@ -162,7 +173,6 @@ const btnBuscar = document.getElementById("btnBuscar");
 const formVehiculo = document.getElementById("formVehiculo");
 const tabla = document.getElementById("tablaVehiculos");
 
-// Función para actualizar la tabla
 function actualizarTabla(filtro = "") {
   const vehiculos = JSON.parse(localStorage.getItem("vehiculos")) || [];
   tabla.innerHTML = `
@@ -174,11 +184,12 @@ function actualizarTabla(filtro = "") {
       <th>Modelo</th>
       <th>Color</th>
       <th>Año</th>
+      <th>Acción</th>
     </tr>
   `;
   vehiculos
     .filter(v => v.placa.includes(filtro) || v.modelo.toLowerCase().includes(filtro.toLowerCase()) || v.rut.includes(filtro) || v.nombre.toLowerCase().includes(filtro.toLowerCase()))
-    .forEach(v => {
+    .forEach((v, index) => {
       const fila = tabla.insertRow(-1);
       fila.insertCell(0).innerText = v.rut;
       fila.insertCell(1).innerText = v.nombre;
@@ -187,13 +198,27 @@ function actualizarTabla(filtro = "") {
       fila.insertCell(4).innerText = v.modelo;
       fila.insertCell(5).innerText = v.color;
       fila.insertCell(6).innerText = v.anio;
+      const accion = fila.insertCell(7);
+      accion.innerHTML = `<button class="btn-delete" onclick="eliminarVehiculo(${index})">Eliminar</button>`;
     });
 }
 
-// Mostrar formulario solo con clave correcta
+function eliminarVehiculo(index) {
+  const clave = prompt("Ingrese la contraseña para eliminar el vehículo:");
+  if (clave === "Estrella2010") {
+    const vehiculos = JSON.parse(localStorage.getItem("vehiculos")) || [];
+    const eliminado = vehiculos.splice(index, 1);
+    localStorage.setItem("vehiculos", JSON.stringify(vehiculos));
+    actualizarTabla();
+    alert(`Vehículo (${eliminado[0].placa}) eliminado correctamente ✅`);
+  } else {
+    alert("Contraseña incorrecta ❌");
+  }
+}
+
 btnRegistrar.addEventListener("click", () => {
   const clave = prompt("Ingrese la clave para registrar vehículo:");
-  if(clave === "Estrella2010") {
+  if (clave === "Estrella2010") {
     formVehiculo.style.display = "block";
     formVehiculo.scrollIntoView({ behavior: "smooth" });
   } else {
@@ -201,7 +226,6 @@ btnRegistrar.addEventListener("click", () => {
   }
 });
 
-// Guardar vehículo
 document.getElementById("guardarVehiculo").addEventListener("click", () => {
   const rut = document.getElementById("rut").value.trim();
   const nombre = document.getElementById("nombre").value.trim();
@@ -211,7 +235,7 @@ document.getElementById("guardarVehiculo").addEventListener("click", () => {
   const color = document.getElementById("color").value.trim();
   const anio = document.getElementById("anio").value.trim();
 
-  if(!rut || !nombre || !placa || !marca || !modelo || !color || !anio) {
+  if (!rut || !nombre || !placa || !marca || !modelo || !color || !anio) {
     alert("Por favor, complete todos los campos.");
     return;
   }
@@ -220,7 +244,6 @@ document.getElementById("guardarVehiculo").addEventListener("click", () => {
   vehiculos.push({ rut, nombre, placa, marca, modelo, color, anio });
   localStorage.setItem("vehiculos", JSON.stringify(vehiculos));
 
-  // Limpiar formulario
   document.getElementById("rut").value = "";
   document.getElementById("nombre").value = "";
   document.getElementById("placa").value = "";
@@ -234,13 +257,11 @@ document.getElementById("guardarVehiculo").addEventListener("click", () => {
   tabla.scrollIntoView({ behavior: "smooth" });
 });
 
-// Buscar vehículo
 btnBuscar.addEventListener("click", () => {
   const busqueda = prompt("Ingrese RUT, placa, nombre o modelo a buscar:");
   actualizarTabla(busqueda || "");
 });
 
-// Cargar tabla al iniciar
 actualizarTabla();
 </script>
 
